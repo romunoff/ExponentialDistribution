@@ -37,26 +37,25 @@ class DistributionController < ApplicationController
       result
     }
 
-    piecewise_approximation_sum = Calculation.piecewise_find_max(calculate, x_limit)
-    calculate_piecewise= ->() {
-      Calculation.piecewise_approximation(calculate, x_limit, piecewise_approximation_sum)
+    calculate_inverse= ->() {
+      Calculation.inverse(lambda)
     }
 
     neumann_data = generator.init(calculate_neumann)
     metropolis_data = generator.init(calculate_metropolis)
-    piecewise_approximation_data = generator.init(calculate_piecewise)
+    inverse_function_data = generator.init(calculate_inverse)
 
     neumann_mean = Calculation.get_mean(neumann_data['sum'], total_generations)
     metropolis_mean = Calculation.get_mean(metropolis_data['sum'], total_generations)
-    piecewise_approximation_mean = Calculation.get_mean(piecewise_approximation_data['sum'], total_generations)
+    inverse_function_mean = Calculation.get_mean(inverse_function_data['sum'], total_generations)
 
     neumann_variance = Calculation.get_variance(neumann_data['sum'], neumann_data['squares_sum'], total_generations)
     metropolis_variance = Calculation.get_variance(metropolis_data['sum'], metropolis_data['squares_sum'], total_generations)
-    piecewise_variance = Calculation.get_variance(piecewise_approximation_data['sum'], piecewise_approximation_data['squares_sum'], total_generations)
+    inverse_function_variance = Calculation.get_variance(inverse_function_data['sum'], inverse_function_data['squares_sum'], total_generations)
 
     neumann_deviation = Calculation.get_deviation(neumann_data['sum'], neumann_data['squares_sum'], total_generations)
     metropolis_deviation = Calculation.get_deviation(metropolis_data['sum'], metropolis_data['squares_sum'], total_generations)
-    piecewise_deviation = Calculation.get_deviation(piecewise_approximation_data['sum'], piecewise_approximation_data['squares_sum'], total_generations)
+    inverse_function_deviation = Calculation.get_deviation(inverse_function_data['sum'], inverse_function_data['squares_sum'], total_generations)
 
     @results = {
       'n' => n,
@@ -76,13 +75,13 @@ class DistributionController < ApplicationController
       'metropolisVariance' => metropolis_variance,
       'metropolisDeviation' => metropolis_deviation,
 
-      'piecewiseApproximationMean' => piecewise_approximation_mean,
-      'piecewiseApproximationVariance' => piecewise_variance,
-      'piecewiseApproximationDeviation' => piecewise_deviation,
+      'inverseFunctionMean' => inverse_function_mean,
+      'inverseFunctionVariance' => inverse_function_variance,
+      'inverseFunctionDeviation' => inverse_function_deviation,
 
       'neumannData' => neumann_data['frequencies'],
       'metropolisData' => metropolis_data['frequencies'],
-      'piecewiseApproximationData' => piecewise_approximation_data['frequencies'],
+      'inverseFunctionData' => inverse_function_data['frequencies'],
     }
   end
 end

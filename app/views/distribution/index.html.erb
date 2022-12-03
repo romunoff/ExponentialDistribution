@@ -96,10 +96,10 @@
             <p class="mb-1" id="metropolis-deviation">Deviation = </p>
           </div>
           <div class="col">
-            <p class="h6 mb-2">Piecewise approximation method</p>
-            <p class="mb-1" id="piecewise-approximation-mean">Mean = </p>
-            <p class="mb-1" id="piecewise-approximation-variance">Variance = </p>
-            <p class="mb-1" id="piecewise-approximation-deviation">Deviation = </p>
+            <p class="h6 mb-2">Inverse function method</p>
+            <p class="mb-1" id="inverse-function-mean">Mean = </p>
+            <p class="mb-1" id="inverse-function-variance">Variance = </p>
+            <p class="mb-1" id="inverse-function-deviation">Deviation = </p>
           </div>
         </div>
       </div>
@@ -242,8 +242,8 @@
             backgroundColor: "#FFD23F",
           },
           {
-            label: "Piecewise Approximation",
-            data: data?.piecewiseApproximationData || [],
+            label: "Inverse Function",
+            data: data?.inverseFunctionData || [],
             backgroundColor: "#0EAD69",
           },
         ],
@@ -285,9 +285,9 @@
       metropolisMean,
       metropolisVariance,
       metropolisDeviation,
-      piecewiseApproximationMean,
-      piecewiseApproximationVariance,
-      piecewiseApproximationDeviation,
+      inverseFunctionMean,
+      inverseFunctionVariance,
+      inverseFunctionDeviation,
     } = data;
 
     document.getElementById('results').style.visibility = 'visible';
@@ -305,9 +305,9 @@
     document.getElementById('metropolis-variance').textContent += metropolisVariance.toFixed(6);
     document.getElementById('metropolis-deviation').textContent += metropolisDeviation.toFixed(6);
 
-    document.getElementById('piecewise-approximation-mean').textContent += piecewiseApproximationMean.toFixed(6);
-    document.getElementById('piecewise-approximation-variance').textContent += piecewiseApproximationVariance.toFixed(6);
-    document.getElementById('piecewise-approximation-deviation').textContent += piecewiseApproximationDeviation.toFixed(6);
+    document.getElementById('inverse-function-mean').textContent += inverseFunctionMean.toFixed(6);
+    document.getElementById('inverse-function-variance').textContent += inverseFunctionVariance.toFixed(6);
+    document.getElementById('inverse-function-deviation').textContent += inverseFunctionDeviation.toFixed(6);
   })();
 
   const redirect = () => {
@@ -353,18 +353,18 @@
       [],
     ];
 
-    const piecewiseApproximationData = [
-      ['Piecewise approximation method'],
-      ['Mean', data.piecewiseApproximationMean],
-      ['Variance', data.piecewiseApproximationVariance],
-      ['Deviation', data.piecewiseApproximationDeviation],
+    const inverseFunctionData = [
+      ['Inverse function method'],
+      ['Mean', data.inverseFunctionMean],
+      ['Variance', data.inverseFunctionVariance],
+      ['Deviation', data.inverseFunctionDeviation],
       [],
     ];
 
     const datasets = [
       ['Neumann data', ...data.neumannData],
       ['Metropolis data', ...data.metropolisData],
-      ['Piecewise approximation data', ...data.piecewiseApproximationData],
+      ['Piecewise approximation data', ...data.inverseFunctionData],
     ];
 
     const exportData = [
@@ -372,7 +372,7 @@
       ...analyticalData,
       ...neumannData,
       ...metropolisData,
-      ...piecewiseApproximationData,
+      ...inverseFunctionData,
       ...datasets,
     ];
 

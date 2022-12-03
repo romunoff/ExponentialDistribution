@@ -1,6 +1,4 @@
 class Calculation
-  @slices = 100
-
   def self.neumann(func, max, x_limit)
     while true
       x = rand(0.0..1.0) * x_limit
@@ -29,31 +27,9 @@ class Calculation
     prev_x
   end
 
-  def self.piecewise_find_max(func, x_limit)
-    sum = 0.0
-
-    (1..@slices).each do |i|
-      x = i * (1.0 / @slices) * 1.0 * x_limit
-      sum += func.call(x)
-    end
-
-    sum
-  end
-
-  def self.piecewise_approximation(func, x_limit, sum)
-    random = rand
-    x = 0
-    p = 0.0
-
-    (1..@slices).each do |i|
-      x = i * (1.0 / @slices) * 1.0 * x_limit
-      p += func.call(x) / sum
-      break if random < p
-    end
-
-    delta = rand
-
-    x - delta * x_limit / @slices
+  def self.inverse(lambda)
+    gamma = rand(0.0..1.0)
+    -Math.log(1.0 - gamma) / lambda
   end
 
   def self.get_mean(sum, count)

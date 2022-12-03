@@ -1,0 +1,386 @@
+<%= javascript_tag do %>
+  window.results = <%= @results.to_json.html_safe %>;
+<% end %>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-floating mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="n"
+          placeholder="Number of generations (n)"
+          min="0"
+          required
+        >
+        <label for="n">Number of generations (n)</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="x"
+          placeholder="Right bound (x)"
+          min="0"
+          step="0.01"
+          required
+        >
+        <label for="x">Right bound (x)</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="number"
+          class="form-control"
+          id="lambda"
+          placeholder="Volatility (λ)"
+          min="0"
+          step="0.01"
+          required
+        >
+        <label for="lambda">Volatility (λ)</label>
+      </div>
+        <div class="d-grid gap-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-success"
+            data-bs-toggle="modal"
+            data-bs-target="#howToUseModal"
+          >
+            How to use
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" onclick="redirect()">Calculate</button>
+        </div>
+    </div>
+    <div class="col-md-9">
+      <div class="d-flex justify-content-end">
+        <div class="btn-group">
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            data-bs-toggle="modal"
+            data-bs-target="#theoreticalInformationModal"
+          >
+            Theoretical information
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary"
+            id="exportButton"
+            onclick="exportXlsx()"
+            disabled
+          >
+            Export
+          </button>
+        </div>
+      </div>
+      <canvas id="chart"></canvas>
+      <div class="mt-3" id="results" style="visibility: hidden;">
+        <div class="row">
+          <div class="col">
+            <p class="h6 mb-2">Analytical method</p>
+            <p class="mb-1" id="analytical-mean">Mean = </p>
+            <p class="mb-1" id="analytical-variance">Variance = </p>
+            <p class="mb-1" id="analytical-deviation">Deviation = </p>
+          </div>
+          <div class="col">
+            <p class="h6 mb-2">Neumann method</p>
+            <p class="mb-1" id="neumann-mean">Mean = </p>
+            <p class="mb-1" id="neumann-variance">Variance = </p>
+            <p class="mb-1" id="neumann-deviation">Deviation = </p>
+          </div>
+          <div class="col">
+            <p class="h6 mb-2">Metropolis method</p>
+            <p class="mb-1" id="metropolis-mean">Mean = </p>
+            <p class="mb-1" id="metropolis-variance">Variance = </p>
+            <p class="mb-1" id="metropolis-deviation">Deviation = </p>
+          </div>
+          <div class="col">
+            <p class="h6 mb-2">Piecewise approximation method</p>
+            <p class="mb-1" id="piecewise-approximation-mean">Mean = </p>
+            <p class="mb-1" id="piecewise-approximation-variance">Variance = </p>
+            <p class="mb-1" id="piecewise-approximation-deviation">Deviation = </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How it works modal -->
+<div class="modal fade" id="howToUseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">How to use</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex flex-column align-items-center">
+          <img src="howItWorks.png" alt="Probability Density Function" style="object-fit: contain;" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Theoretical information modal -->
+<div class="modal fade" id="theoreticalInformationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Theoretical information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <strong>The exponential distribution</strong> is an absolutely continuous distribution that models the time
+          between two successive occurrences of the same event.
+        </div>
+        <div class="d-flex flex-column mb-3">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex flex-column align-items-center">
+              <p class="mb-0">
+                <strong>
+                  <small>Probability Density Function</small>
+                </strong>
+              </p>
+              <img src="probabilityDensityFunction.png" alt="Probability Density Function" style="object-fit: contain;" />
+            </div>
+            <div class="d-flex flex-column align-items-center">
+              <p class="mb-0">
+                <strong>
+                  <small>Cumulative Distribution Function</small>
+                </strong>
+              </p>
+              <img src="cumulativeDistributionFunction.png" alt="Cumulative Distribution Function" style="object-fit: contain;" />
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <p class="h5 mb-1">Probability density function</p>
+          A random variable <strong>X</strong> has an exponential distribution with parameter <strong>λ > 0</strong>
+          if its probability density is:
+          <div class="d-flex justify-content-center">
+            <img src="densityFunction.svg" alt="Function" style="object-fit: contain;" />
+          </div>
+          Here <strong>λ > 0</strong> is the parameter of the distribution, often called the rate parameter.
+          The distribution is supported on the interval <strong>[0, ∞)</strong>. If a random variable X has this distribution,
+          we write <strong>X ~ Exp(λ)</strong>. The exponential distribution exhibits infinite divisibility.
+        </div>
+        <div class="mb-3">
+          <p class="h5 mb-1">Cumulative distribution function</p>
+          The cumulative distribution function is given by:
+          <div class="d-flex justify-content-center">
+            <img src="cumulativeFunction.svg" alt="Function" style="object-fit: contain;" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <p class="h5 mb-1">Properties</p>
+          <strong>The mean</strong> or expected value of an exponentially distributed random variable <strong>X</strong>
+          with rate parameter <strong>λ</strong> is given by:
+          <div class="d-flex justify-content-center">
+            <img src="meanFunction.svg" alt="Function" style="object-fit: contain;" />
+          </div>
+          <strong>The variance</strong> of <strong>X</strong> is given by:
+          <div class="d-flex justify-content-center">
+            <img src="varianceFunction.svg" alt="Function" style="object-fit: contain;" />
+          </div>
+          so the <strong>standard deviation</strong> is equal to the mean.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const params = (new URL(document.location)).searchParams;
+
+    const n = params.get('n');
+    const x = params.get('x');
+    const lambda = params.get('lambda');
+
+    document.getElementById('n').value = n ? +n : 10000;
+    document.getElementById('x').value = x ? +x : 3;
+    document.getElementById('lambda').value = lambda ? +lambda : 1.5;
+  })();
+
+  (() => {
+    let x_limit = 3;
+    let step = 0.1;
+
+    const data = window.results;
+
+    if (data) {
+      x_limit = data.x;
+      step = data.step;
+    }
+
+    const canvas = document.getElementById('chart');
+    const labels = Array.from(Array(x_limit / step).keys()).map((_, index) => (index * 0.1).toFixed(1));
+
+    new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Neumann",
+            data: data?.neumannData || [],
+            backgroundColor: "#191919",
+          },
+          {
+            label: "Metropolis",
+            data: data?.metropolisData || [],
+            backgroundColor: "#FFD23F",
+          },
+          {
+            label: "Piecewise Approximation",
+            data: data?.piecewiseApproximationData || [],
+            backgroundColor: "#0EAD69",
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: "Frequency",
+            },
+            beginAtZero: true
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Interval'
+            }
+          }
+        }
+      }
+    })
+  })();
+
+  (() => {
+    const data = window.results;
+
+    if (!data) {
+      return;
+    }
+
+    const {
+      analyticalMean,
+      analyticalVariance,
+      analyticalDeviation,
+      neumannMean,
+      neumannVariance,
+      neumannDeviation,
+      metropolisMean,
+      metropolisVariance,
+      metropolisDeviation,
+      piecewiseApproximationMean,
+      piecewiseApproximationVariance,
+      piecewiseApproximationDeviation,
+    } = data;
+
+    document.getElementById('results').style.visibility = 'visible';
+    document.getElementById('exportButton').removeAttribute('disabled');
+
+    document.getElementById('analytical-mean').textContent += analyticalMean.toFixed(6);
+    document.getElementById('analytical-variance').textContent += analyticalVariance.toFixed(6);
+    document.getElementById('analytical-deviation').textContent += analyticalDeviation.toFixed(6);
+
+    document.getElementById('neumann-mean').textContent += neumannMean.toFixed(6);
+    document.getElementById('neumann-variance').textContent += neumannVariance.toFixed(6);
+    document.getElementById('neumann-deviation').textContent += neumannDeviation.toFixed(6);
+
+    document.getElementById('metropolis-mean').textContent += metropolisMean.toFixed(6);
+    document.getElementById('metropolis-variance').textContent += metropolisVariance.toFixed(6);
+    document.getElementById('metropolis-deviation').textContent += metropolisDeviation.toFixed(6);
+
+    document.getElementById('piecewise-approximation-mean').textContent += piecewiseApproximationMean.toFixed(6);
+    document.getElementById('piecewise-approximation-variance').textContent += piecewiseApproximationVariance.toFixed(6);
+    document.getElementById('piecewise-approximation-deviation').textContent += piecewiseApproximationDeviation.toFixed(6);
+  })();
+
+  const redirect = () => {
+    const n = document.getElementById('n').value;
+    const x = document.getElementById('x').value;
+    const lambda = document.getElementById('lambda').value;
+
+    window.location.search = `n=${n}&x=${x}&lambda=${lambda}`;
+  };
+
+  const exportXlsx = () => {
+    const data = window.results;
+
+    const options = [
+      ['Number of generations (n)', data.n],
+      ['Right bound (x)', data.x],
+      ['Volatility (λ)', data.lambda],
+      ['Step', data.step],
+      [],
+    ];
+
+    const analyticalData = [
+      ['Analytical method'],
+      ['Mean', data.analyticalMean],
+      ['Variance', data.analyticalVariance],
+      ['Deviation', data.analyticalDeviation],
+      [],
+    ];
+
+    const neumannData = [
+      ['Neumann method'],
+      ['Mean', data.neumannMean],
+      ['Variance', data.neumannVariance],
+      ['Deviation', data.neumannDeviation],
+      [],
+    ];
+
+    const metropolisData = [
+      ['Metropolis method'],
+      ['Mean', data.metropolisMean],
+      ['Variance', data.metropolisVariance],
+      ['Deviation', data.metropolisDeviation],
+      [],
+    ];
+
+    const piecewiseApproximationData = [
+      ['Piecewise approximation method'],
+      ['Mean', data.piecewiseApproximationMean],
+      ['Variance', data.piecewiseApproximationVariance],
+      ['Deviation', data.piecewiseApproximationDeviation],
+      [],
+    ];
+
+    const datasets = [
+      ['Neumann data', ...data.neumannData],
+      ['Metropolis data', ...data.metropolisData],
+      ['Piecewise approximation data', ...data.piecewiseApproximationData],
+    ];
+
+    const exportData = [
+      ...options,
+      ...analyticalData,
+      ...neumannData,
+      ...metropolisData,
+      ...piecewiseApproximationData,
+      ...datasets,
+    ];
+
+    const name = 'ExponentialDistribution';
+    const workBook = window.XLSX.utils.book_new();
+    workBook.SheetNames.push(name);
+    workBook.Sheets[name] = window.XLSX.utils.aoa_to_sheet(exportData);
+    window.XLSX.writeFile(workBook, `${name}.xlsx`);
+  };
+
+</script>

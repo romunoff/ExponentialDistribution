@@ -11,17 +11,17 @@ class Calculation
   end
 
   def self.metropolis(func, x_limit, prev_x)
-    gamma1 = rand
-    gamma2 = rand
+    gamma1 = rand(0.0..1.0)
+    gamma2 = rand(0.0..1.0)
 
     delta = (1.0 / 3.0) * x_limit
-    x1 = prev_x + delta * (-1.0 + 2.0 * gamma1)
+    x = prev_x + delta * (-1.0 + 2.0 * gamma1)
 
     result = func.call(prev_x)
-    alpha = func.call(x1) / (!result ? 1 : result)
+    alpha = func.call(x) / (!result ? 1 : result)
 
-    if alpha >= 1.0||alpha > gamma2
-      return x1
+    if alpha >= 1.0 || alpha > gamma2
+      return x
     end
 
     prev_x
